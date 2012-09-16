@@ -52,7 +52,7 @@ curl "https://login.xero.com/?applicationToken=${apptoken}&redirectCount=1&bhjs=
 
 for account in $accounts; do
 	# Look for the latest account file from today
-	file=$(ls -1t accounts/Cheque/$(date +%Y-%m-%d).*.ofx 2>/dev/null | head -1)
+	file=$(ls -1t accounts/$account/$(date +%Y-%m-%d).*.ofx 2>/dev/null | head -1)
 	[ $file ] || continue
 
 	# Import the account
