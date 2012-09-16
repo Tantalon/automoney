@@ -55,13 +55,16 @@ for account in $accounts; do
 	file=$(ls -1t accounts/$account/$(date +%Y-%m-%d).*.ofx 2>/dev/null | head -1)
 	[ $file ] || continue
 
+	#for file in $(ls -1t accounts/$account/*.ofx); do
+
 	# Import the account
 	echo Importing $account from $file
-	curl --header 'Expect:' --form "bankFile=@$file" "https://personal.xero.com/$person_code/Import/LoadBankStatement/Cheque" > $tmp/xero-import-$account.html
+	curl --header 'Expect:' --form "bankFile=@$file" "https://personal.xero.com/$person_code/Import/LoadBankStatement/$account" > $tmp/xero-import-$account.html
 
 	# Display the results
 	sed -ne 's|.*"ImportResultMessage":"\([^"]*\)".*|\1|p' $tmp/xero-import-$account.html | sed -e 's|\\u003c|<|g' -e 's|\\u003e|>|g' -e 's|</p>|.|' -e 's|<[^>]*>||g'
 
+	#done
 done
 
 rm -f $tmp/*
