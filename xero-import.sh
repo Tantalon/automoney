@@ -41,21 +41,13 @@ dos2unix -q $tmp/xero-app-token.txt
 read apptoken < $tmp/xero-app-token.txt
 [ $apptoken ] || exit 1
 
-curl "https://login.xero.com/?applicationToken=${apptoken}&redirectCount=1&bhjs=-1" > $tmp/xero-page3.html
-
-sed -ne 's|.*applicationToken=\([a-z0-9]*\).*|\1|p' $tmp/xero-page3.html | head -1 | urlencode > $tmp/xero-app-token.txt
-dos2unix -q $tmp/xero-app-token.txt
-read apptoken < $tmp/xero-app-token.txt
-[ $apptoken ] || exit 1
-
-curl "https://login.xero.com/?applicationToken=${apptoken}&redirectCount=1&bhjs=-1" > $tmp/xero-page4.html
-
 for account in $accounts; do
 	# Look for the latest account file from today
 	file=$(ls -1t accounts/$account/$(date +%Y-%m-%d).*.ofx 2>/dev/null | head -1)
 	[ $file ] || continue
 
-	#for file in $(ls -1t accounts/$account/*.ofx); do
+	# Import the last 3 account files
+	#for file in $(ls -1 accounts/$account/*.ofx | tail -3); do
 
 	# Import the account
 	echo Importing $account from $file
