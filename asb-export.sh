@@ -48,6 +48,10 @@ curl "https://fnc.asbbank.co.nz/$server/$session/Statement/Index" > $tmp/stateme
 gsed -ne 's|.*<option.*showExport="True".*value="\([0-9]*\):\([^"]*\)">\([^<]*\)</option>.*|\1 \2 \3|p' $tmp/statement-form.html > $tmp/accounts.txt
 
 cat $tmp/accounts.txt | while read id type name; do
+	# normalize the name
+	name=$(echo $name | sed -e 's| XXXX-XXXX-XXXX||')
+
+	# process the account
 	echo "Exporting $name account"
 	mkdir -p "accounts/$name"
 	file="accounts/$name/$(date +%Y-%m-%d.%H%M).ofx"
