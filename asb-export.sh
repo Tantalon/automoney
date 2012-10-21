@@ -2,6 +2,7 @@
 
 user=
 pass=
+offset=3
 tmp=/tmp/asb-export
 
 [ -f asb-config ] && . asb-config
@@ -14,8 +15,8 @@ request() {
 	echo -n "&Request.AccountKey=$1:$2"
 	echo -n "&Request.FromDateMinValue=08/08/2010"
 	echo -n "&Request.StatementMode=Search"
-	echo -n "&Request.FromDate=$(date -v -3m +%d/%m/%Y)"
-	echo -n "&Request.ToDate=$(date +%d/%m/%Y)"
+	echo -n "&Request.FromDate=$(date -v -${offset}m +%d/%m/%Y)"
+	echo -n "&Request.ToDate=$(date -v -$((offset - 3))m +%d/%m/%Y)"
 	echo -n "&Request.DescriptionFilter="
 	echo -n "&Request.DescriptionFilter_watermark=e.g. Countdown"
 	echo -n "&Request.NumberOfTransactionsPerPage=250"
@@ -54,7 +55,7 @@ cat $tmp/accounts.txt | while read id type name; do
 	# process the account
 	echo "Exporting $name account"
 	mkdir -p "accounts/$name"
-	file="accounts/$name/$(date +%Y-%m-%d.%H%M).ofx"
+	file="accounts/$name/$(date -v -${offset}m +%Y-%m-%d.%H%M).ofx"
 	curl -d @<(request $id $type | escape) "https://fnc.asbbank.co.nz/$server/$session/statement" > "$file"
 	grep -q '<OFX>' "$file"  || rm "$file"
 done
