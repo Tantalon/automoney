@@ -55,7 +55,7 @@ cat $tmp/accounts.txt | while read id type name; do
 	# process the account
 	echo "Exporting $name account"
 	mkdir -p "accounts/$name"
-	file="accounts/$name/$(date -v -${offset}m +%Y-%m-%d.%H%M).ofx"
+	file="accounts/$name/$(date -v -$((offset - 3))m +%Y-%m-%d.%H%M).ofx"
 	curl -d @<(request $id $type | escape) "https://fnc.asbbank.co.nz/$server/$session/statement" > "$file"
 	grep -q '<OFX>' "$file"  || rm "$file"
 done
